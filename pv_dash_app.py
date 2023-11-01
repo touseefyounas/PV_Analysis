@@ -4,7 +4,7 @@
   "metadata": {
     "colab": {
       "provenance": [],
-      "authorship_tag": "ABX9TyPxGzmVVhdeEtSoEMybS/+F",
+      "authorship_tag": "ABX9TyMAdgEnrEx1hLPWOT4cy82G",
       "include_colab_link": true
     },
     "kernelspec": {
@@ -155,8 +155,8 @@
         "    return f'Tilt Angle: {tilt_value}°', f'Azimuth Angle: {azimuth_value}°',f'Inverter Efficiency:{inv_value}%'\n",
         "\n",
         "@app.callback(\n",
-        "    [Output('','data'),\n",
-        "    Output('','data'),\n",
+        "    [Output('monthly_df','data'),\n",
+        "    Output('hourly_df','data'),\n",
         "    Output('error_message_monthly','children'),\n",
         "    Output('error_message_hourly','children')],\n",
         "    [Input('system_capacity','number'),\n",
@@ -172,6 +172,8 @@
         "def get_pv_data(system_capacity,module_type,system_losses,array_type,tilt_angle,azimuth_angle,lat,lon,inv_eff):\n",
         "  url=\"https://developer.nrel.gov/api/pvwatts/v8\"\n",
         "  api_key=\"Rrm78PdXJt41jDkniLFvy5M2NyFY90cxQd2xGopJ\"\n",
+        "  error_message_monthly = None\n",
+        "  error_message_hourly = None\n",
         "  params_monthly={'format':'json',\n",
         "        'api_key':api_key,\n",
         "        'system_capacity':system_capacity,\n",
@@ -203,7 +205,7 @@
         "\n",
         "  if response_monthly.status_code==200:\n",
         "    pv_data_monthly=response_monthly.json()\n",
-        "    monthly_df=pv_data_monthly['outputs']\n",
+        "    pv_monthly_data=pv_data_monthly['outputs']\n",
         "\n",
         "  else:\n",
         "    error_message_monthly=f\"Error: {response_monthly.status_code} - {response_monthly.text}\"\n",
@@ -211,7 +213,7 @@
         "\n",
         "\n",
         "  Months=['January','February','March','April','May','June','July','August','September','October','November','December']\n",
-        "  monthly_df=pd.DataFrame(output_data_monthly)\n",
+        "  monthly_df=pd.DataFrame(pv_monthly_data)\n",
         "  monthly_df.insert(0,'Month',Months)\n",
         "\n",
         "  if response_hourly.status_code==200:\n",
